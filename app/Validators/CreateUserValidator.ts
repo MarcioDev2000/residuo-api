@@ -13,6 +13,7 @@ export default class CreateUserValidator {
     nome: schema.string({ trim: true }, [rules.required()]),
     sobrenome: schema.string({ trim: true }, [rules.required()]),
     telefone: schema.string({ trim: true }, [rules.required()]),
+    roleIds: schema.array.optional().members(schema.number()),
   })
 
   public messages: CustomMessages = {

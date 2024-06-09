@@ -1,17 +1,16 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, beforeSave, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, beforeSave, hasMany, HasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import LinkToken from './LinkToken'
+import Role from './Role'
 import Hash from '@ioc:Adonis/Core/Hash'
 
 export default class User extends BaseModel {
-
   @column({ isPrimary: true })
   public id: number
 
   @column()
   public email: string
 
-  // Define a coluna 'password' e especifica que ela não deve ser serializada em JSON
   @column({ serializeAs: null })
   public password: string
 
@@ -24,10 +23,18 @@ export default class User extends BaseModel {
   @column()
   public telefone: string
 
+  @column()
+  public endereco: string
+
   @hasMany(() => LinkToken, {
     foreignKey: 'userId',
   })
   public tokens: HasMany<typeof LinkToken>
+
+  @manyToMany(() => Role, {
+    pivotTable: 'user_roles',
+  })
+  public roles: ManyToMany<typeof Role>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
