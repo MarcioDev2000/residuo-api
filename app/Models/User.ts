@@ -14,18 +14,6 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
-  @column()
-  public nome: string
-
-  @column()
-  public sobrenome: string
-
-  @column()
-  public telefone: string
-
-  @column()
-  public endereco: string
-
   @hasMany(() => LinkToken, {
     foreignKey: 'userId',
   })
