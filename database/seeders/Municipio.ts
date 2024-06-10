@@ -22,8 +22,9 @@ export default class MunicipioSeeder extends BaseSeeder {
       Moxico: ['Alto Zambeze', 'Bundas', 'Camanongue', 'Cameia', 'Léua', 'Luchazes', 'Luacano', 'Luau', 'Lumbala Nguimbo', 'Lumeje', 'Lutembo', 'Moxico', 'Namacunde', 'Ninda'],
       Namibe: ['Bibala', 'Camucuio', 'Moçâmedes', 'Tômbua', 'Virei'],
       Uige: ['Ambuila', 'Bembe', 'Buengas', 'Bungo', 'Damba', 'Maquela do Zombo', 'Negage', 'Puri', 'Quimbele', 'Sanza Pombo', 'Songo', 'Uíge'],
-      Zaire: ['Cuimba', 'M\'Banza Kongo', 'N\'Zeto', 'Soio', 'Tomboco']
-
+      Zaire: ['Cuimba', 'M\'Banza Kongo', 'N\'Zeto', 'Soio', 'Tomboco'],
+      LundaNorte: ['Cambulo', 'Capenda-Camulemba', 'Caungula', 'Chitato', 'Cuango', 'Cuílo', 'Lubalo', 'Xá-Muteba'],
+      Lundaul: ['Cacolo', 'Dala', 'Muconda', 'Saurimo']
     }
 
     for (const provincia of provincias) {

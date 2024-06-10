@@ -20,6 +20,8 @@ export default class ProvinciaSeeder extends BaseSeeder {
       { nome: 'Namibe' },
       { nome: 'Uíge' },
       { nome: 'Zaire' },
+      { nome: 'Lunda Norte' },
+      { nome: 'Lunda Sul' }
     ])
   }
 }

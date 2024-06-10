@@ -13,9 +13,6 @@ export default class AdminUserSeeder extends BaseSeeder {
       {
         email: 'admin@gmail.com',
         password: 'admin123', // Defina a senha do usuário admin aqui
-        nome: 'Pessela',
-        sobrenome: 'Abreu',
-        telefone: '933058851',
       }
     )
 
