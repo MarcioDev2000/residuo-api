@@ -1,60 +1,17 @@
-/**
- * Config source: https://git.io/JfefC
- *
- * Feel free to let us know via PR, if you find something broken in this config
- * file.
- */
-
 import type { CorsConfig } from '@ioc:Adonis/Core/Cors'
 
 const corsConfig: CorsConfig = {
-  /*
-  |--------------------------------------------------------------------------
-  | Enabled
-  |--------------------------------------------------------------------------
-  |
-  | A boolean to enable or disable CORS integration from your AdonisJs
-  | application.
-  |
-  | Setting the value to `true` will enable the CORS for all HTTP request. However,
-  | you can define a function to enable/disable it on per request basis as well.
-  |
-  */
-  enabled: false,
+  enabled: true, // Habilita o CORS
 
-  // You can also use a function that return true or false.
-  // enabled: (request) => request.url().startsWith('/api')
+  // Permite solicitações apenas da origem do seu aplicativo Angular
+  origin: 'http://localhost:4200',
 
   /*
   |--------------------------------------------------------------------------
-  | Origin
+  | Métodos
   |--------------------------------------------------------------------------
   |
-  | Set a list of origins to be allowed for `Access-Control-Allow-Origin`.
-  | The value can be one of the following:
-  |
-  | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-  |
-  | Boolean (true)    - Allow current request origin.
-  | Boolean (false)   - Disallow all.
-  | String            - Comma separated list of allowed origins.
-  | Array             - An array of allowed origins.
-  | String (*)        - A wildcard (*) to allow all request origins.
-  | Function          - Receives the current origin string and should return
-  |                     one of the above values.
-  |
-  */
-  origin: true,
-
-  /*
-  |--------------------------------------------------------------------------
-  | Methods
-  |--------------------------------------------------------------------------
-  |
-  | An array of allowed HTTP methods for CORS. The `Access-Control-Request-Method`
-  | is checked against the following list.
-  |
-  | Following is the list of default methods. Feel free to add more.
+  | Uma lista de métodos HTTP permitidos para o CORS.
   */
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
 
@@ -63,17 +20,7 @@ const corsConfig: CorsConfig = {
   | Headers
   |--------------------------------------------------------------------------
   |
-  | List of headers to be allowed for `Access-Control-Allow-Headers` header.
-  | The value can be one of the following:
-  |
-  | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Request-Headers
-  |
-  | Boolean(true)     - Allow all headers mentioned in `Access-Control-Request-Headers`.
-  | Boolean(false)    - Disallow all headers.
-  | String            - Comma separated list of allowed headers.
-  | Array             - An array of allowed headers.
-  | Function          - Receives the current header and should return one of the above values.
-  |
+  | Lista de headers permitidos para o CORS.
   */
   headers: true,
 
@@ -82,20 +29,7 @@ const corsConfig: CorsConfig = {
   | Expose Headers
   |--------------------------------------------------------------------------
   |
-  | A list of headers to be exposed by setting `Access-Control-Expose-Headers`.
-  | header. By default following 6 simple response headers are exposed.
-  |
-  | Cache-Control
-  | Content-Language
-  | Content-Type
-  | Expires
-  | Last-Modified
-  | Pragma
-  |
-  | In order to add more headers, simply define them inside the following array.
-  |
-  | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers
-  |
+  | Lista de headers expostos pelo CORS.
   */
   exposeHeaders: [
     'cache-control',
@@ -111,11 +45,7 @@ const corsConfig: CorsConfig = {
   | Credentials
   |--------------------------------------------------------------------------
   |
-  | Toggle `Access-Control-Allow-Credentials` header. If value is set to `true`,
-  | then header will be set, otherwise not.
-  |
-  | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials
-  |
+  | Define se o header `Access-Control-Allow-Credentials` deve ser enviado.
   */
   credentials: true,
 
@@ -124,9 +54,7 @@ const corsConfig: CorsConfig = {
   | MaxAge
   |--------------------------------------------------------------------------
   |
-  | Define `Access-Control-Max-Age` header in seconds.
-  | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age
-  |
+  | Define o valor do header `Access-Control-Max-Age` em segundos.
   */
   maxAge: 90,
 }
