@@ -1,8 +1,5 @@
 import Route from '@ioc:Adonis/Core/Route'
-
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+import Provincia from 'App/Models/Provincia' // Importe o modelo da província aqui
 
 // Rota para criar um novo usuário
 Route.post('/users', 'UsersController.store')
@@ -19,3 +16,16 @@ Route.post('/reset-password', 'PasswordsController.resetPassword')
 // Rotas para cadastro adicional
 Route.post('/empresas', 'EmpresasController.store')
 Route.post('/usuarios-individuais', 'UsuariosIndividuaisController.store')
+
+// Rota para obter todos os municípios de uma província específica
+Route.get('/provincias/:id/municipios', async ({ params }) => {
+  const provincia = await Provincia.findOrFail(params.id) // Busca a província pelo ID
+
+  // Retorna todos os municípios relacionados a essa província
+  return await provincia.related('municipios').query()
+})
+
+// Rota para obter todas as províncias
+Route.get('/provincias', async () => {
+  return await Provincia.all() // Retorna todas as províncias
+})
