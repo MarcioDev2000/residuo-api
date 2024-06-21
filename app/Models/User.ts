@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, beforeSave, hasMany, HasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
-import LinkToken from './LinkToken'
-import Role from './Role'
+import { BaseModel, column, beforeSave, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
+import LinkToken from 'App/Models/LinkToken'
 import Hash from '@ioc:Adonis/Core/Hash'
 
 export default class User extends BaseModel {
@@ -11,6 +10,21 @@ export default class User extends BaseModel {
   @column()
   public email: string
 
+  @column()
+  public nome: string
+
+  @column()
+  public sobrenome: string
+
+  @column()
+  public telefone: string
+
+  @column()
+  public nif: string
+
+  @column()
+  public endereco: string
+
   @column({ serializeAs: null })
   public password: string
 
@@ -18,11 +32,6 @@ export default class User extends BaseModel {
     foreignKey: 'userId',
   })
   public tokens: HasMany<typeof LinkToken>
-
-  @manyToMany(() => Role, {
-    pivotTable: 'user_roles',
-  })
-  public roles: ManyToMany<typeof Role>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -32,9 +41,7 @@ export default class User extends BaseModel {
 
   @beforeSave()
   public static async hashPassword(user: User) {
-    // Verifica se a senha do usuário foi modificada
     if (user.$dirty.password) {
-      // Se a senha foi modificada, criptografa a nova senha antes de salvar no banco de dados
       user.password = await Hash.make(user.password)
     }
   }

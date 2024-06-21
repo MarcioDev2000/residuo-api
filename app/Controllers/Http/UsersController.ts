@@ -2,8 +2,6 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import CreateUserValidator from 'App/Validators/CreateUserValidator'
 import BadRequestException from 'App/Exceptions/BadRequestException'
-import Role from 'App/Models/Role'
-import UserRole from 'App/Models/UserRole'
 
 export default class UsersController {
   public async store({ request, response }: HttpContextContract) {
@@ -15,35 +13,8 @@ export default class UsersController {
       throw new BadRequestException('E-mail já está em uso')
     }
 
-    // Obtém o ID do role selecionado pelo usuário
-    const roleId = request.input('role_id')
-
-    // Verifica se o role existe
-    const role = await Role.findOrFail(roleId)
-
-    // Verifica se o ID do role corresponde a "individuo" (ID 1) ou "empresa" (ID 2)
-    if (role.id !== 1 && role.id !== 2) {
-      throw new BadRequestException('Tipo de usuário inválido')
-    }
-
     // Cria o usuário no banco de dados
     const user = await User.create(userPayload)
-
-    // Associa o role ao usuário na tabela user_roles
-    await UserRole.create({
-      userId: user.id,
-      roleId: role.id,
-    })
-
-    // Se o usuário for do tipo "empresa", redireciona para o cadastro de empresa
-    if (role.id === 2) {
-      return response.created({ user, message: 'Usuário do tipo empresa criado. Por favor, prossiga para o cadastro da empresa.' })
-    }
-
-    // Se o usuário for do tipo "individuo", redireciona para o cadastro de usuário individual
-    if (role.id === 1) {
-      return response.created({ user, message: 'Usuário do tipo indivíduo criado. Por favor, prossiga para o cadastro individual.' })
-    }
 
     return response.created({ user })
   }

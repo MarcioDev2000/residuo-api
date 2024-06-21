@@ -10,7 +10,10 @@ export default class CreateUserValidator {
       rules.unique({ table: 'users', column: 'email' }),
     ]),
     password: schema.string({ trim: true }, [rules.minLength(8)]),
-    roleIds: schema.array.optional().members(schema.number()),
+    nome: schema.string({ trim: true}),
+    sobrenome: schema.string({ trim: true}),
+    telefone: schema.string({ trim: true}),
+    nif: schema.string({ trim:true})
   })
 
   public messages: CustomMessages = {
@@ -22,5 +25,6 @@ export default class CreateUserValidator {
     'nome.required': 'O campo de nome é obrigatório',
     'sobrenome.required': 'O campo de sobrenome é obrigatório',
     'telefone.required': 'O campo de telefone é obrigatório',
+    'nif.required': 'O campo de nif é obrigatório',
   }
 }
