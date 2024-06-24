@@ -1,14 +1,15 @@
+// app/Models/Transacao.ts
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
-import User from 'App/Models/User'
+import { BaseModel, column, belongsTo, BelongsTo, computed } from '@ioc:Adonis/Lucid/Orm'
 import Residuo from 'App/Models/Residuo'
+import User from 'App/Models/User'
 
 export default class Transacao extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public residuoID: number  // ID do resíduo envolvido na transação
+  public residuo_id: number // ID do resíduo envolvido na transação
 
   @column()
   public idUsuarioOferta: number  // ID do usuário ofertante na transação
@@ -21,6 +22,21 @@ export default class Transacao extends BaseModel {
 
   @column()
   public status: string  // Estado da transação (pendente, concluída, cancelada, etc.)
+
+  @column()
+  public quantidade: number  // Quantidade transacionada
+
+  @column()
+  public valor_unitario: number  // Valor unitário do resíduo
+
+  @column()
+  public valor_total: number  // Valor total da transação
+
+  @column()
+  public metodo_pagamento: string | null
+
+  @column()
+  public endereco_entrega: string | null  // Endereço de entrega (opcional)
 
   @column.dateTime({ autoCreate: true })
   public criadoEm: DateTime  // Data de criação do registro
@@ -36,4 +52,13 @@ export default class Transacao extends BaseModel {
 
   @belongsTo(() => User, { foreignKey: 'idUsuarioRecebe' })
   public usuarioRecebe: BelongsTo<typeof User>
+
+  /**
+   * Método computado para calcular o valor total da transação.
+   * Calculado automaticamente com base na quantidade e no valor unitário.
+   */
+  @computed()
+  public get total() {
+    return this.quantidade * this.valor_unitario
+  }
 }

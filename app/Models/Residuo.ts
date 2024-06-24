@@ -33,7 +33,7 @@ export default class Residuo extends BaseModel {
   public localizacao: string
 
   @column()
-  public fotos: string[]
+  public fotos: any
 
   @column.dateTime({ autoCreate: true })
   public criadoEm: DateTime
@@ -52,4 +52,21 @@ export default class Residuo extends BaseModel {
 
   @belongsTo(() => Disponibilidade)
   public disponibilidade: BelongsTo<typeof Disponibilidade>
+
+  /**
+   * Verifica se o resíduo está disponível para aquisição imediata.
+   * Isso pode ser baseado no campo disponibilidadeID, onde diferentes IDs indicam diferentes estados de disponibilidade.
+   */
+  public estaDisponivelParaCompra(): boolean {
+    // Exemplo: Se disponibilidadeID for igual a 1, está disponível para compra imediata
+    return this.disponibilidadeID === 1
+  }
+
+  /**
+   * Função estática para encontrar um resíduo pelo ID.
+   * @param id ID do resíduo a ser encontrado
+   */
+  public static async findById(id: number): Promise<Residuo> {
+    return await Residuo.findOrFail(id)
+  }
 }

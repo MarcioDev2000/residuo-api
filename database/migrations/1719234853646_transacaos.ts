@@ -14,6 +14,7 @@ export default class Transacaos extends BaseSchema {
       table.float('valor_total').notNullable()  // Valor total da transação
       table.enum('status', ['pendente', 'concluida', 'cancelada']).defaultTo('pendente')  // Status da transação
       table.string('metodo_pagamento').nullable()  // Método de pagamento utilizado
+      table.string('endereco_entrega').nullable()  // Endereço de entrega (se aplicável)
       table.text('observacoes').nullable()  // Observações adicionais
       table.boolean('avaliada').defaultTo(false)  // Indica se a transação foi avaliada
       table.integer('avaliacao_comprador').nullable()  // Avaliação dada pelo comprador
