@@ -1,5 +1,3 @@
-// app/Controllers/Http/TransacaosController.ts
-
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Transacao from 'App/Models/Transacao'
 import TransacaoValidator from 'App/Validators/TransacaoValidator'
@@ -15,16 +13,14 @@ export default class TransacaosController {
     const payload = await request.validate(TransacaoValidator)
 
     try {
+      // Cálculo do valor total da transação
+      const valorTotal = payload.quantidade * payload.valor_unitario
+
       // Criar a transação no banco de dados
-      const transacao = await Transacao.create(payload)
-
-      // Atualizar a quantidade do resíduo correspondente
-      await this.atualizarQuantidadeResiduo(transacao.residuo_id, payload.quantidade)
-
-      // Exemplo de cálculo do valor total (considerando quantidade e outros custos)
-      const valorTotal = payload.quantidade * transacao.valor_unitario
-      transacao.valor_total = valorTotal
-      await transacao.save()
+      const transacao = await Transacao.create({
+        ...payload,
+        valor_total: valorTotal, // Inclui o valor_total calculado
+      })
 
       return response.created({ transacao })
     } catch (error) {
@@ -41,13 +37,11 @@ export default class TransacaosController {
     const payload = await request.validate(TransacaoValidator)
 
     try {
-      // Criar a transação no banco de dados com status de negociação iniciada
-      const transacao = await Transacao.create(payload)
+      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
+      const valorTotal = payload.quantidade * payload.valor_unitario
 
-      // Exemplo de cálculo do valor total (considerando quantidade e outros custos)
-      const valorTotal = payload.quantidade * transacao.valor_unitario
-      transacao.valor_total = valorTotal
-      await transacao.save()
+      // Cria a transação no banco de dados com status de negociação iniciada
+      const transacao = await Transacao.create({ ...payload, valor_total: valorTotal })
 
       return response.created({ transacao })
     } catch (error) {
@@ -58,31 +52,17 @@ export default class TransacaosController {
   /**
    * Método para reservar um resíduo.
    * URL: POST /transacaos/reservar
-   * Exemplo de payload para reservar um resíduo:
-   * {
-   *   "residuo_id": 1,
-   *   "idUsuarioOferta": 1,
-   *   "idUsuarioRecebe": 2,
-   *   "quantidade": 10,
-   *   "valor_unitario": 50,
-   *   "status": "reserva_solicitada"
-   * }
    */
   public async reservar({ request, response }: HttpContextContract) {
     // Validação dos dados recebidos
     const payload = await request.validate(TransacaoValidator)
 
     try {
-      // Criar a transação no banco de dados com status de reserva solicitada
-      const transacao = await Transacao.create(payload)
+      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
+      const valorTotal = payload.quantidade * payload.valor_unitario
 
-      // Atualizar a quantidade do resíduo correspondente (opcional, dependendo da lógica de reserva/negociação)
-      await this.atualizarQuantidadeResiduo(transacao.residuo_id, payload.quantidade)
-
-      // Exemplo de cálculo do valor total (considerando quantidade e outros custos)
-      const valorTotal = payload.quantidade * transacao.valor_unitario
-      transacao.valor_total = valorTotal
-      await transacao.save()
+      // Cria a transação no banco de dados com status de reserva solicitada
+      const transacao = await Transacao.create({ ...payload, valor_total: valorTotal })
 
       return response.created({ transacao })
     } catch (error) {
@@ -106,7 +86,12 @@ export default class TransacaosController {
       transacao.quantidade = payload.quantidade_desejada
       transacao.metodo_pagamento = payload.metodo_pagamento
       transacao.endereco_entrega = payload.endereco_entrega
-      transacao.status = 'aguardando_confirmacao' // Defina o status conforme a lógica do seu sistema
+      transacao.status = 'concluida' // Atualiza o status para "concluída"
+
+      // Se a transação foi concluída com sucesso, atualize a quantidade do resíduo
+      await this.atualizarQuantidadeResiduo(transacao.residuo_id, transacao.quantidade)
+
+      // Salva as alterações no banco de dados
       await transacao.save()
 
       return response.ok({ message: 'Transação finalizada com sucesso', transacao })
@@ -114,6 +99,7 @@ export default class TransacaosController {
       return response.badRequest({ message: error.message })
     }
   }
+
 
   /**
    * Método privado para atualizar a quantidade de um resíduo após uma transação.

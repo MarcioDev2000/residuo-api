@@ -17,7 +17,6 @@ export default class TransacaoValidator {
     ]),
     quantidade: schema.number(),
     valor_unitario: schema.number(),
-    valor_total: schema.number(),
     status: schema.enum.optional([
       'pendente',
       'concluida',

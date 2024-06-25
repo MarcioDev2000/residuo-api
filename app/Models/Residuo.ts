@@ -33,13 +33,13 @@ export default class Residuo extends BaseModel {
   public localizacao: string
 
   @column()
-  public fotos: any
+  public fotos: string  
 
   @column.dateTime({ autoCreate: true })
-  public criadoEm: DateTime
+  public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public atualizadoEm: DateTime
+  public updatedAt: DateTime
 
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>

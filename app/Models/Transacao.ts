@@ -12,10 +12,10 @@ export default class Transacao extends BaseModel {
   public residuo_id: number // ID do resíduo envolvido na transação
 
   @column()
-  public idUsuarioOferta: number  // ID do usuário ofertante na transação
+  public comprador_id: number
 
   @column()
-  public idUsuarioRecebe: number  // ID do usuário receptor na transação
+  public vendedor_id: number
 
   @column.dateTime({ autoCreate: true })
   public dataTransacao: DateTime  // Data e hora da transação
@@ -38,20 +38,32 @@ export default class Transacao extends BaseModel {
   @column()
   public endereco_entrega: string | null  // Endereço de entrega (opcional)
 
+  @column()
+  public observacoes?: string
+
+  @column()
+  public avaliada: boolean  // Indica se a transação foi avaliada
+
+  @column()
+  public avaliacao_comprador: number | null  // Avaliação dada pelo comprador
+
+  @column()
+  public avaliacao_vendedor: number | null  // Avaliação dada pelo vendedor
+
   @column.dateTime({ autoCreate: true })
-  public criadoEm: DateTime  // Data de criação do registro
+  public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public atualizadoEm: DateTime  // Data da última atualização do registro
+  public updatedAt: DateTime
 
   @belongsTo(() => Residuo)
   public residuo: BelongsTo<typeof Residuo>
 
-  @belongsTo(() => User, { foreignKey: 'idUsuarioOferta' })
-  public usuarioOferta: BelongsTo<typeof User>
+  @belongsTo(() => User, { foreignKey: 'comprador_id' })
+  public comprador: BelongsTo<typeof User>
 
-  @belongsTo(() => User, { foreignKey: 'idUsuarioRecebe' })
-  public usuarioRecebe: BelongsTo<typeof User>
+  @belongsTo(() => User, { foreignKey: 'vendedor_id' })
+  public vendedor: BelongsTo<typeof User>
 
   /**
    * Método computado para calcular o valor total da transação.

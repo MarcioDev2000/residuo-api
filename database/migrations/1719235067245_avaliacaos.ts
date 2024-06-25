@@ -6,9 +6,9 @@ export default class Avaliacaos extends BaseSchema {
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('transacao_id').notNullable()  // ID da transação relacionada à avaliação
-      table.integer('avaliador_id').notNullable()  // ID do avaliador (quem está dando a avaliação)
-      table.integer('avaliado_id').notNullable()  // ID do avaliado (quem está recebendo a avaliação)
+      table.integer('transacao_id').unsigned().notNullable().references('id').inTable('transacaos').onDelete('CASCADE').index()// ID da transação relacionada à avaliação
+      table.integer('avaliador_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').index() // ID do avaliador (quem está dando a avaliação)
+      table.integer('avaliado_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').index()// ID do avaliado (quem está recebendo a avaliação)
       table.enum('tipo', ['comprador', 'vendedor']).notNullable()  // Tipo de avaliação (comprador ou vendedor)
       table.integer('classificacao').notNullable()  // Classificação da avaliação (por exemplo, de 1 a 5)
       table.text('comentario').nullable()  // Comentário opcional sobre a avaliação
