@@ -51,6 +51,9 @@ export default class Transacao extends BaseModel {
   public avaliacao_vendedor: number | null  // Avaliação dada pelo vendedor
 
   @column.dateTime({ autoCreate: true })
+  public data_expiracao_reserva: DateTime | null  // Data de expiração da reserva
+
+  @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })

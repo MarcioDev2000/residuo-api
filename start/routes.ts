@@ -17,4 +17,4 @@ Route.get('/residuos', 'ResiduosController.index')
 Route.get('/residuos/:id', 'ResiduosController.show')
 Route.post('/transacaos/reservar', 'TransacaosController.reservar')
 Route.post('transacaos/finalizar', 'TransacaosController.finalizar')
-
+Route.get('/profile', 'ProfileController.show')
