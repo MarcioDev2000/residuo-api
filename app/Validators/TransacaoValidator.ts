@@ -16,7 +16,6 @@ export default class TransacaoValidator {
       rules.exists({ table: 'users', column: 'id' }),
     ]),
     quantidade: schema.number(),
-    valor_unitario: schema.number(),
     status: schema.enum.optional([
       'pendente',
       'concluida',
@@ -24,9 +23,6 @@ export default class TransacaoValidator {
     ]),
     metodo_pagamento: schema.string.optional(),
     observacoes: schema.string.optional(),
-    avaliada: schema.boolean.optional(),
-    avaliacao_comprador: schema.number.optional(),
-    avaliacao_vendedor: schema.number.optional(),
     endereco_entrega: schema.string.optional(), // Novo campo adicionado
   })
 
@@ -35,7 +31,6 @@ export default class TransacaoValidator {
     'comprador_id.exists': 'O ID do comprador informado não existe',
     'vendedor_id.exists': 'O ID do vendedor informado não existe',
     'quantidade.required': 'A quantidade transacionada é obrigatória',
-    'valor_unitario.required': 'O valor unitário é obrigatório',
     'status.enum': 'O status da transação deve ser "pendente", "concluida" ou "cancelada"',
     'metodo_pagamento.string': 'O método de pagamento deve ser uma string',
     'observacoes.string': 'As observações devem ser uma string',

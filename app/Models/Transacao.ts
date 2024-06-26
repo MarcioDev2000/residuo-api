@@ -1,4 +1,3 @@
-// app/Models/Transacao.ts
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, BelongsTo, computed } from '@ioc:Adonis/Lucid/Orm'
 import Residuo from 'App/Models/Residuo'
@@ -27,9 +26,6 @@ export default class Transacao extends BaseModel {
   public quantidade: number  // Quantidade transacionada
 
   @column()
-  public valor_unitario: number  // Valor unitário do resíduo
-
-  @column()
   public valor_total: number  // Valor total da transação
 
   @column()
@@ -40,18 +36,6 @@ export default class Transacao extends BaseModel {
 
   @column()
   public observacoes?: string
-
-  @column()
-  public avaliada: boolean  // Indica se a transação foi avaliada
-
-  @column()
-  public avaliacao_comprador: number | null  // Avaliação dada pelo comprador
-
-  @column()
-  public avaliacao_vendedor: number | null  // Avaliação dada pelo vendedor
-
-  @column.dateTime({ autoCreate: true })
-  public data_expiracao_reserva: DateTime | null  // Data de expiração da reserva
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -70,11 +54,15 @@ export default class Transacao extends BaseModel {
 
   /**
    * Método computado para calcular o valor total da transação.
-   * Calculado automaticamente com base na quantidade e no valor unitário.
+   * Calculado automaticamente com base na quantidade e no valor unitário do resíduo.
    */
   @computed()
   public get total() {
-    return this.quantidade * this.valor_unitario
+    // Este método foi ajustado para calcular o total com base na quantidade e no valor_unitario do resíduo
+    if (this.residuo && this.quantidade) {
+      return this.quantidade * this.residuo.valor_unitario
+    }
+    return 0
   }
 
   /**
@@ -92,6 +80,4 @@ export default class Transacao extends BaseModel {
   public podeComprarDeOutroUsuario(): boolean {
     return !this.isCompradorVendedor()
   }
-
-
 }

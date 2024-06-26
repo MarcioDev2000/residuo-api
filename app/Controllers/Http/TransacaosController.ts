@@ -1,8 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Transacao from 'App/Models/Transacao'
-import TransacaoValidator from 'App/Validators/TransacaoValidator'
 import Residuo from 'App/Models/Residuo'
-import { DateTime } from 'luxon'
+import TransacaoValidator from 'App/Validators/TransacaoValidator'
 
 export default class TransacaosController {
   /**
@@ -11,11 +10,14 @@ export default class TransacaosController {
    */
   public async store({ request, response, auth }: HttpContextContract) {
     // Validação dos dados recebidos
-    const payload = await request.validate(TransacaoValidator)
+    const { residuo_id, quantidade } = await request.validate(TransacaoValidator)
 
     try {
-      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
-      const valorTotal = payload.quantidade * payload.valor_unitario
+      // Encontrar o resíduo associado
+      const residuo = await Residuo.findOrFail(residuo_id)
+
+      // Calcula o valor total automaticamente com base na quantidade e no valor unitário do resíduo
+      const valorTotal = quantidade * residuo.valor_unitario
 
       // Obtém o ID do vendedor com base no usuário autenticado
       const vendedor = await auth.authenticate()
@@ -23,55 +25,12 @@ export default class TransacaosController {
 
       // Cria a transação no banco de dados com status de negociação iniciada
       const transacao = await Transacao.create({
-        ...payload,
+        residuo_id,
+        comprador_id: vendedorId, // Usando o mesmo ID para comprador e vendedor neste exemplo
         vendedor_id: vendedorId,
-        valor_total: valorTotal,
+        quantidade,
+        valor_total: valorTotal, // Apenas valor_total é necessário aqui
         status: 'pendente' // Ou outro status inicial apropriado
-      })
-
-      return response.created({ transacao })
-    } catch (error) {
-      return response.badRequest({ message: error.message })
-    }
-  }
-
-  /**
-   * Método para reservar um resíduo.
-   * URL: POST /transacaos/reservar
-   */
-  public async reservar({ request, response, auth }: HttpContextContract) {
-    // Validação dos dados recebidos
-    const payload = await request.validate(TransacaoValidator)
-
-    // Verificar se o resíduo já está reservado e a reserva não expirou
-    const reservaExistente = await Transacao.query()
-      .where('residuo_id', payload.residuo_id)
-      .where('status', 'reserva_solicitada')
-      .where('data_expiracao_reserva', '>', DateTime.now().toSQL())
-      .first()
-
-    if (reservaExistente) {
-      return response.badRequest({ message: 'O resíduo já está reservado' })
-    }
-
-    try {
-      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
-      const valorTotal = payload.quantidade * payload.valor_unitario
-
-      // Obtém o ID do vendedor com base no usuário autenticado
-      const vendedor = await auth.authenticate()
-      const vendedorId = vendedor.id
-
-      // Define a data de expiração da reserva (24 horas a partir do momento da criação)
-      const dataExpiracaoReserva = DateTime.now().plus({ hours: 24 })
-
-      // Cria a transação no banco de dados com status de reserva solicitada e data de expiração
-      const transacao = await Transacao.create({
-        ...payload,
-        vendedor_id: vendedorId,
-        valor_total: valorTotal,
-        status: 'reserva_solicitada',
-        data_expiracao_reserva: dataExpiracaoReserva
       })
 
       return response.created({ transacao })
@@ -86,7 +45,7 @@ export default class TransacaosController {
    */
   public async finalizar({ request, response }: HttpContextContract) {
     // Obter os dados da transação a ser finalizada
-    const { transacao_id, comprador_id, quantidade_desejada, metodo_pagamento, endereco_entrega, valor_pago } = request.only(['transacao_id', 'comprador_id', 'quantidade_desejada', 'metodo_pagamento', 'endereco_entrega', 'valor_pago'])
+    const { transacao_id, comprador_id, metodo_pagamento, endereco_entrega } = request.only(['transacao_id', 'comprador_id', 'metodo_pagamento', 'endereco_entrega'])
 
     try {
       // Encontrar a transação pelo ID
@@ -96,7 +55,6 @@ export default class TransacaosController {
       transacao.comprador_id = comprador_id
 
       // Atualizar os detalhes da transação conforme necessário
-      transacao.quantidade = quantidade_desejada
       transacao.metodo_pagamento = metodo_pagamento
       transacao.endereco_entrega = endereco_entrega
       transacao.status = 'concluida' // Atualiza o status para "concluída"
@@ -107,11 +65,7 @@ export default class TransacaosController {
       // Exemplo: Atualizar a quantidade do resíduo após a transação
       await this.atualizarQuantidadeResiduo(transacao.residuo_id, transacao.quantidade)
 
-      // Calcular o valor total e o troco
-      const valorTotal = transacao.quantidade * transacao.valor_unitario
-      const troco = valor_pago - valorTotal
-
-      return response.ok({ message: 'Transação finalizada com sucesso', transacao, troco })
+      return response.ok({ message: 'Transação finalizada com sucesso', transacao })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
