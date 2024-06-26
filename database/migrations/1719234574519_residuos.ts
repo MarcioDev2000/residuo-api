@@ -12,6 +12,7 @@ export default class Residuos extends BaseSchema {
       table.integer('disponibilidade_id').unsigned().notNullable().references('id').inTable('disponibilidades').onDelete('CASCADE').index()
       table.string('descricao').nullable()
       table.float('quantidade').notNullable()
+      table.float('valor_unitario').notNullable()
       table.string('localizacao').nullable()
       table.string('fotos').nullable()
       table.timestamp('created_at', { useTz: true })

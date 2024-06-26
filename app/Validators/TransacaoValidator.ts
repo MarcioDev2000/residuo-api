@@ -27,6 +27,7 @@ export default class TransacaoValidator {
     avaliada: schema.boolean.optional(),
     avaliacao_comprador: schema.number.optional(),
     avaliacao_vendedor: schema.number.optional(),
+    endereco_entrega: schema.string.optional(), // Novo campo adicionado
   })
 
   public messages: CustomMessages = {
@@ -35,7 +36,6 @@ export default class TransacaoValidator {
     'vendedor_id.exists': 'O ID do vendedor informado não existe',
     'quantidade.required': 'A quantidade transacionada é obrigatória',
     'valor_unitario.required': 'O valor unitário é obrigatório',
-    'valor_total.required': 'O valor total da transação é obrigatório',
     'status.enum': 'O status da transação deve ser "pendente", "concluida" ou "cancelada"',
     'metodo_pagamento.string': 'O método de pagamento deve ser uma string',
     'observacoes.string': 'As observações devem ser uma string',

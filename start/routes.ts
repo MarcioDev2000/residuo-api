@@ -11,10 +11,16 @@ Route.get('/auto-login', 'SessionsController.autoLogin')
 // Rotas para recuperação de senha
 Route.post('/forgot-password', 'PasswordsController.forgotPassword')
 Route.post('/reset-password', 'PasswordsController.resetPassword')
-Route.post('/residuos', 'ResiduosController.store')
-Route.post('/transacaos', 'TransacaosController.store')
+
+// Rotas protegidas para resíduos e transações
+Route.post('/residuos', 'ResiduosController.store').middleware('auth')
+Route.post('/transacaos', 'TransacaosController.store').middleware('auth')
+Route.post('/transacaos/reservar', 'TransacaosController.reservar').middleware('auth')
+Route.post('/transacaos/finalizar', 'TransacaosController.finalizar').middleware('auth')
+
+// Rotas públicas para visualizar resíduos
 Route.get('/residuos', 'ResiduosController.index')
 Route.get('/residuos/:id', 'ResiduosController.show')
-Route.post('/transacaos/reservar', 'TransacaosController.reservar')
-Route.post('transacaos/finalizar', 'TransacaosController.finalizar')
-Route.get('/profile', 'ProfileController.show')
+
+// Rota para visualizar o perfil do usuário autenticado
+Route.get('/profile', 'ProfileController.show').middleware('auth')

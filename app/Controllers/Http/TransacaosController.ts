@@ -6,21 +6,27 @@ import { DateTime } from 'luxon'
 
 export default class TransacaosController {
   /**
-   * Método para criar uma nova transação.
+   * Método para criar uma nova transação (negociação inicial).
    * URL: POST /transacaos
    */
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, auth }: HttpContextContract) {
     // Validação dos dados recebidos
     const payload = await request.validate(TransacaoValidator)
 
     try {
-      // Cálculo do valor total da transação
+      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
       const valorTotal = payload.quantidade * payload.valor_unitario
 
-      // Criar a transação no banco de dados
+      // Obtém o ID do vendedor com base no usuário autenticado
+      const vendedor = await auth.authenticate()
+      const vendedorId = vendedor.id
+
+      // Cria a transação no banco de dados com status de negociação iniciada
       const transacao = await Transacao.create({
         ...payload,
-        valor_total: valorTotal, // Inclui o valor_total calculado
+        vendedor_id: vendedorId,
+        valor_total: valorTotal,
+        status: 'pendente' // Ou outro status inicial apropriado
       })
 
       return response.created({ transacao })
@@ -30,27 +36,10 @@ export default class TransacaosController {
   }
 
   /**
-   * Método para iniciar uma negociação.
-   * URL: POST /transacaos/negociar
+   * Método para reservar um resíduo.
+   * URL: POST /transacaos/reservar
    */
-  public async negociar({ request, response }: HttpContextContract) {
-    // Validação dos dados recebidos
-    const payload = await request.validate(TransacaoValidator)
-
-    try {
-      // Calcula o valor total automaticamente com base na quantidade e no valor unitário
-      const valorTotal = payload.quantidade * payload.valor_unitario
-
-      // Cria a transação no banco de dados com status de negociação iniciada
-      const transacao = await Transacao.create({ ...payload, valor_total: valorTotal })
-
-      return response.created({ transacao })
-    } catch (error) {
-      return response.badRequest({ message: error.message })
-    }
-  }
-
-  public async reservar({ request, response }: HttpContextContract) {
+  public async reservar({ request, response, auth }: HttpContextContract) {
     // Validação dos dados recebidos
     const payload = await request.validate(TransacaoValidator)
 
@@ -69,15 +58,20 @@ export default class TransacaosController {
       // Calcula o valor total automaticamente com base na quantidade e no valor unitário
       const valorTotal = payload.quantidade * payload.valor_unitario
 
+      // Obtém o ID do vendedor com base no usuário autenticado
+      const vendedor = await auth.authenticate()
+      const vendedorId = vendedor.id
+
       // Define a data de expiração da reserva (24 horas a partir do momento da criação)
       const dataExpiracaoReserva = DateTime.now().plus({ hours: 24 })
 
       // Cria a transação no banco de dados com status de reserva solicitada e data de expiração
       const transacao = await Transacao.create({
         ...payload,
+        vendedor_id: vendedorId,
         valor_total: valorTotal,
         status: 'reserva_solicitada',
-        data_expiracao_reserva: dataExpiracaoReserva // Utilize o DateTime diretamente
+        data_expiracao_reserva: dataExpiracaoReserva
       })
 
       return response.created({ transacao })
@@ -91,38 +85,37 @@ export default class TransacaosController {
    * URL: POST /transacaos/finalizar
    */
   public async finalizar({ request, response }: HttpContextContract) {
-    // Validação dos dados recebidos
-    const payload = request.only(['transacao_id', 'quantidade_desejada', 'metodo_pagamento', 'endereco_entrega'])
+    // Obter os dados da transação a ser finalizada
+    const { transacao_id, comprador_id, quantidade_desejada, metodo_pagamento, endereco_entrega, valor_pago } = request.only(['transacao_id', 'comprador_id', 'quantidade_desejada', 'metodo_pagamento', 'endereco_entrega', 'valor_pago'])
 
     try {
       // Encontrar a transação pelo ID
-      const transacao = await Transacao.findOrFail(payload.transacao_id)
+      const transacao = await Transacao.findOrFail(transacao_id)
 
-      // Verificar se a reserva está expirada
-      if (transacao.status === 'reserva_solicitada' && transacao.data_expiracao_reserva && transacao.data_expiracao_reserva < DateTime.now()) {
-        transacao.status = 'expirada'
-        await transacao.save()
-        return response.badRequest({ message: 'A reserva expirou' })
-      }
+      // Associar o comprador à transação
+      transacao.comprador_id = comprador_id
 
       // Atualizar os detalhes da transação conforme necessário
-      transacao.quantidade = payload.quantidade_desejada
-      transacao.metodo_pagamento = payload.metodo_pagamento
-      transacao.endereco_entrega = payload.endereco_entrega
+      transacao.quantidade = quantidade_desejada
+      transacao.metodo_pagamento = metodo_pagamento
+      transacao.endereco_entrega = endereco_entrega
       transacao.status = 'concluida' // Atualiza o status para "concluída"
 
-      // Se a transação foi concluída com sucesso, atualize a quantidade do resíduo
-      await this.atualizarQuantidadeResiduo(transacao.residuo_id, transacao.quantidade)
-
-      // Salva as alterações no banco de dados
+      // Realizar outras operações necessárias, como cálculo final do valor, etc.
       await transacao.save()
 
-      return response.ok({ message: 'Transação finalizada com sucesso', transacao })
+      // Exemplo: Atualizar a quantidade do resíduo após a transação
+      await this.atualizarQuantidadeResiduo(transacao.residuo_id, transacao.quantidade)
+
+      // Calcular o valor total e o troco
+      const valorTotal = transacao.quantidade * transacao.valor_unitario
+      const troco = valor_pago - valorTotal
+
+      return response.ok({ message: 'Transação finalizada com sucesso', transacao, troco })
     } catch (error) {
       return response.badRequest({ message: error.message })
     }
   }
-
 
   /**
    * Método privado para atualizar a quantidade de um resíduo após uma transação.

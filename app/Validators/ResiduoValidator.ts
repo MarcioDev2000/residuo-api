@@ -1,4 +1,6 @@
-import { schema, CustomMessages } from '@ioc:Adonis/Core/Validator'
+// app/Validators/ResiduoValidator.ts
+
+import { schema,CustomMessages } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class CreateResiduoValidator {
@@ -13,6 +15,7 @@ export default class CreateResiduoValidator {
     quantidade: schema.number(),
     localizacao: schema.string.optional({ trim: true }),
     fotos: schema.string.optional({ trim: true }),
+    valor_unitario: schema.number(), // Adiciona o valor_unitario como obrigatório
   })
 
   public messages: CustomMessages = {
@@ -21,5 +24,6 @@ export default class CreateResiduoValidator {
     'condicao_id.required': 'O ID da condição é obrigatório',
     'disponibilidade_id.required': 'O ID da disponibilidade é obrigatório',
     'quantidade.required': 'A quantidade do resíduo é obrigatória',
+    'valor_unitario.required': 'O valor unitário do resíduo é obrigatório',
   }
 }

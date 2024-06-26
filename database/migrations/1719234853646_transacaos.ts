@@ -11,6 +11,7 @@ export default class Transacaos extends BaseSchema {
       table.integer('vendedor_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').index()
       table.float('quantidade').notNullable()  // Quantidade transacionada
       table.float('valor_unitario').notNullable()  // Valor unitário do resíduo
+      table.float('valor_total').notNullable()  // Valor unitário do resíduo
       table.enum('status', ['pendente', 'concluida', 'cancelada', 'reserva_solicitada', 'expirada']).defaultTo('pendente')  // Status da transação
       table.string('metodo_pagamento').nullable()  // Método de pagamento utilizado
       table.string('endereco_entrega').nullable()  // Endereço de entrega (se aplicável)

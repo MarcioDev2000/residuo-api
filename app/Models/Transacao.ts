@@ -76,4 +76,22 @@ export default class Transacao extends BaseModel {
   public get total() {
     return this.quantidade * this.valor_unitario
   }
+
+  /**
+   * Método para verificar se o comprador é o vendedor.
+   * Retorna true se o comprador for o mesmo que o vendedor.
+   */
+  public isCompradorVendedor(): boolean {
+    return this.comprador_id === this.vendedor_id
+  }
+
+  /**
+   * Método para verificar se um usuário pode comprar um resíduo de outro usuário.
+   * Retorna true se o comprador não for o mesmo que o vendedor.
+   */
+  public podeComprarDeOutroUsuario(): boolean {
+    return !this.isCompradorVendedor()
+  }
+
+
 }

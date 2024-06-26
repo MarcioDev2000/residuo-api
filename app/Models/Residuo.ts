@@ -21,6 +21,9 @@ export default class Residuo extends BaseModel {
   public condicaoID: number
 
   @column()
+  public valor_unitario:number
+
+  @column()
   public disponibilidadeID: number
 
   @column()
@@ -33,7 +36,7 @@ export default class Residuo extends BaseModel {
   public localizacao: string
 
   @column()
-  public fotos: string  
+  public fotos: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
