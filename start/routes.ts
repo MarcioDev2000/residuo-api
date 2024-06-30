@@ -24,3 +24,6 @@ Route.get('/residuos/:id', 'ResiduosController.show')
 
 // Rota para visualizar o perfil do usuário autenticado
 Route.get('/profile', 'ProfileController.show').middleware('auth')
+
+Route.post('/payments/create', 'PaymentsController.createPaymentIntent');
+Route.post('/stripe/webhook', 'PaymentsController.handleStripeWebhook');
