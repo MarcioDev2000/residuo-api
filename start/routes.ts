@@ -27,3 +27,8 @@ Route.get('/profile', 'ProfileController.show').middleware('auth')
 
 Route.post('/payments/create', 'PaymentsController.createPaymentIntent');
 Route.post('/stripe/webhook', 'PaymentsController.handleStripeWebhook');
+
+
+// Rotas para confirmar pagamento e recebimento
+Route.post('/transacaos/confirmar-pagamento', 'TransacaosController.confirmarPagamento').middleware('auth');
+Route.post('/transacaos/confirmar-recebimento', 'TransacaosController.confirmarRecebimento').middleware('auth');
