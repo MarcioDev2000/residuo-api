@@ -14,6 +14,9 @@ Route.post('/reset-password', 'PasswordsController.resetPassword')
 
 // Rotas protegidas para resíduos e transações
 Route.post('/residuos', 'ResiduosController.store').middleware('auth')
+Route.get('/tipo-residuos', 'TipoResiduosController.index')
+Route.get('/condicao', 'CondicaosController.index')
+
 Route.post('/transacaos', 'TransacaosController.store').middleware('auth')
 Route.post('/transacaos/reservar', 'TransacaosController.reservar').middleware('auth')
 Route.post('/transacaos/finalizar', 'TransacaosController.finalizar').middleware('auth')
@@ -35,3 +38,5 @@ Route.post('/transacaos/confirmar-recebimento', 'TransacaosController.confirmarR
 
 // Rota para retornar o menu
 Route.get('/menus', 'MenusController.index');
+
+

@@ -6,6 +6,7 @@ export default class Residuos extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
+      table.string('nome').notNullable()
       table.integer('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE').index()
       table.integer('tipo_residuo_id').unsigned().notNullable().references('id').inTable('tipo_residuos').onDelete('CASCADE').index()
       table.integer('condicao_id').unsigned().notNullable().references('id').inTable('condicaos').onDelete('CASCADE').index()

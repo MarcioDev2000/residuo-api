@@ -15,6 +15,9 @@ export default class Residuo extends BaseModel {
   public userID: number
 
   @column()
+  public nome: string
+
+  @column()
   public tipoResiduoID: number
 
   @column()

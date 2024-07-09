@@ -14,14 +14,29 @@ export default class MenusController {
       {
         label: 'Home',
         items: [
-          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: '/' }
+          { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: '/dashboard' }
         ]
       },
       {
         items: [
-          { label: 'Residuos', icon: 'pi pi-fw pi-image', routerLink: '/residuo' },
+          { label: 'Residuos', icon: 'pi pi-fw pi-shopping-cart', routerLink: '/dashboard/residuos' },
           { label: 'Chart', icon: 'pi pi-fw pi-chart-bar', routerLink: '/charts' },
-          { label: 'Sair', icon: 'pi pi-fw pi-sign-out', routerLink: '/charts' }
+        ]
+      },
+      {
+        label: 'Configurações',
+        icon: 'pi pi-fw pi-cog',
+        items: [
+          { label: 'Perfil', icon: 'pi pi-fw pi-user', routerLink: '/settings/profile' },
+          { label: 'Sair', icon: 'pi pi-fw pi-sign-out', routerLink: '/' }
+        ]
+      },
+      {
+        label: 'Relatórios',
+        icon: 'pi pi-fw pi-file',
+        items: [
+          { label: 'Financeiros', icon: 'pi pi-fw pi-money-bill', routerLink: '/reports/financial' },
+          { label: 'Operacionais', icon: 'pi pi-fw pi-list', routerLink: '/reports/operational' }
         ]
       }
     ];
