@@ -5,7 +5,6 @@ interface MenuItem {
   items?: MenuItem[];
   icon?: string;
   routerLink?: string;
-  command?: (() => void) | string;
 }
 
 export default class MenusController {
@@ -28,7 +27,7 @@ export default class MenusController {
         icon: 'pi pi-fw pi-cog',
         items: [
           { label: 'Perfil', icon: 'pi pi-fw pi-user', routerLink: '/settings/profile' },
-          { label: 'Sair', icon: 'pi pi-fw pi-sign-out', routerLink: '/' }
+          { label: 'Sair', icon: 'pi pi-fw pi-sign-out' } // Sem comando, pois será tratado no Angular
         ]
       },
       {

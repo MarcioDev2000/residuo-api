@@ -8,6 +8,7 @@ export default class CreateResiduoValidator {
 
   public schema = schema.create({
     user_id: schema.number(),
+    nome: schema.string(),
     tipo_residuo_id: schema.number(),
     condicao_id: schema.number(),
     disponibilidade_id: schema.number(),

@@ -5,7 +5,7 @@ Route.post('/users', 'UsersController.store')
 
 // Rotas para autenticação
 Route.post('/login', 'SessionsController.store')
-Route.post('/logout', 'SessionsController.destroy')
+Route.delete('/logout', 'SessionsController.destroy')
 Route.get('/auto-login', 'SessionsController.autoLogin')
 
 // Rotas para recuperação de senha
@@ -16,6 +16,7 @@ Route.post('/reset-password', 'PasswordsController.resetPassword')
 Route.post('/residuos', 'ResiduosController.store').middleware('auth')
 Route.get('/tipo-residuos', 'TipoResiduosController.index')
 Route.get('/condicao', 'CondicaosController.index')
+Route.get('/disponibilidade', 'DesponibilidadesController.index')
 
 Route.post('/transacaos', 'TransacaosController.store').middleware('auth')
 Route.post('/transacaos/reservar', 'TransacaosController.reservar').middleware('auth')

@@ -3,12 +3,18 @@ import Residuo from 'App/Models/Residuo'
 import CreateResiduoValidator from 'App/Validators/ResiduoValidator'
 
 export default class ResiduosController {
-  public async store({ request, response }: HttpContextContract) {
-    const residuoPayload = await request.validate(CreateResiduoValidator)
-    const residuo = await Residuo.create(residuoPayload)
-    return response.created({ residuo })
-  }
+  public async store({ request, response, auth }: HttpContextContract) {
+    try {
+      const user = await auth.authenticate();
+      const residuoPayload = await request.validate(CreateResiduoValidator);
+      residuoPayload.user_id = user.id; // Atribui o ID do usuário autenticado ao payload
 
+      const residuo = await Residuo.create(residuoPayload);
+      return response.created({ residuo });
+    } catch (error) {
+      return response.badRequest({ message: 'Erro ao criar resíduo', error: error.message });
+    }
+  }
   public async index({ request, response }: HttpContextContract) {
     const { tipoResiduoID, quantidadeMinima, localizacao } = request.qs()
 
