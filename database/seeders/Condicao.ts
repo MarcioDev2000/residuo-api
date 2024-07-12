@@ -10,7 +10,6 @@ export default class CondicaoSeeder extends BaseSeeder {
       { nome: 'Danificado' },
       { nome: 'Outro' },
     ]
-
     await Condicao.createMany(condicoesData)
   }
 }

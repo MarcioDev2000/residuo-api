@@ -10,9 +10,10 @@ export default class TipoResiduoSeeder extends BaseSeeder {
       { nome: 'Metal' },
       { nome: 'Orgânico' },
       { nome: 'Eletrônico' },
+      { nome: 'Madeira' },
+      { nome: 'Vestuário' },
       { nome: 'Outro' },
     ]
-
     await TipoResiduo.createMany(tiposResiduoData)
   }
 }
