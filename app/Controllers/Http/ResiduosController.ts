@@ -15,26 +15,35 @@ export default class ResiduosController {
       return response.badRequest({ message: 'Erro ao criar resíduo', error: error.message });
     }
   }
-  public async index({ request, response }: HttpContextContract) {
+
+  public async index({ params, request, response, auth }: HttpContextContract) {
     const { tipoResiduoID, quantidadeMinima, localizacao } = request.qs()
+    const { user_id } = params
 
     try {
-      let query = Residuo.query().where('quantidade', '>', 0)
+      const authenticatedUser = await auth.authenticate();
+
+      // Verificar se o ID do usuário na URL é igual ao ID do usuário autenticado
+      if (parseInt(user_id, 10) !== authenticatedUser.id) {
+        return response.unauthorized({ message: 'Acesso não autorizado' });
+      }
+
+      let query = Residuo.query().where('user_id', authenticatedUser.id).andWhere('quantidade', '>', 0);
 
       if (tipoResiduoID) {
-        query.where('tipo_residuo_id', tipoResiduoID)
+        query.where('tipo_residuo_id', tipoResiduoID);
       }
       if (quantidadeMinima) {
-        query.where('quantidade', '>=', quantidadeMinima)
+        query.where('quantidade', '>=', quantidadeMinima);
       }
       if (localizacao) {
-        query.where('localizacao', 'ilike', `%${localizacao}%`)
+        query.where('localizacao', 'ilike', `%${localizacao}%`);
       }
 
-      const residuos = await query.exec()
-      return response.ok(residuos)
+      const residuos = await query.exec();
+      return response.ok(residuos);
     } catch (error) {
-      return response.badRequest({ message: 'Erro ao buscar resíduos', error: error.message })
+      return response.badRequest({ message: 'Erro ao buscar resíduos', error: error.message });
     }
   }
 

@@ -23,7 +23,7 @@ Route.post('/transacaos/reservar', 'TransacaosController.reservar').middleware('
 Route.post('/transacaos/finalizar', 'TransacaosController.finalizar').middleware('auth')
 
 // Rotas públicas para visualizar resíduos
-Route.get('/residuos', 'ResiduosController.index')
+Route.get('/residuos/:user_id', 'ResiduosController.index')
 Route.get('/residuos/:id', 'ResiduosController.show')
 
 // Rota para visualizar o perfil do usuário autenticado
