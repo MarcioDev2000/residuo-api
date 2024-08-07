@@ -15,7 +15,7 @@ export default class CreateResiduoValidator {
     descricao: schema.string.optional({ trim: true }),
     quantidade: schema.number(),
     localizacao: schema.string.optional({ trim: true }),
-    fotos: schema.string.optional({ trim: true }),
+    fotos: schema.string.optional(),
     valor_unitario: schema.number(), // Adiciona o valor_unitario como obrigatório
   })
 
